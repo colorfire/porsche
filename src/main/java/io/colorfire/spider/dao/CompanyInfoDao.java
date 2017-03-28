@@ -3,6 +3,8 @@ package io.colorfire.spider.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author colorfire on 17/3/27
@@ -75,6 +77,41 @@ public class CompanyInfoDao extends BaseDao<CompanyInfo> {
       }
     }
     return ci;
+  }
+
+
+  public List<CompanyInfo> list() {
+    String sql = "SELECT `id`, `name`, `shortName`, `website`, `address`, `logo`, `coordrinate`, " +
+            "`fromUrl` FROM `company_info` WHERE LENGTH(coordrinate) > 1;";
+    ResultSet rs = null;
+
+    List<CompanyInfo> list = new ArrayList<CompanyInfo>();
+    try {
+      rs = stmt.executeQuery(sql);
+      //STEP 5: Extract data from result set
+      while (rs.next()) {
+        //Retrieve by column name
+        CompanyInfo ci = new CompanyInfo();
+        ci.setName(rs.getString("name"));
+        ci.setShortName(rs.getString("shortName"));
+        ci.setWebsite(rs.getString("website"));
+        ci.setAddress(rs.getString("address"));
+        ci.setLogo(rs.getString("logo"));
+        ci.setCoordinate(rs.getString("coordrinate"));
+        ci.setFromUrl(rs.getString("fromUrl"));
+        list.add(ci);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (rs != null)
+          rs.close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+    return list;
   }
 
 
